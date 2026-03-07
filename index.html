@@ -3,212 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر ضبي للغتر الفاخرة</title>
+    <title>متجر ضبي للغتر</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --gold: #c5a059;
-            --dark: #121212;
-            --cream: #f9f7f2;
-            --white: #ffffff;
-        }
-
-        body {
-            background-color: var(--cream);
-            font-family: 'Cairo', sans-serif;
-            margin: 0;
-            padding: 0;
-            color: var(--dark);
-        }
-
-        /* الهيدر المتجاوب */
+        :root { --gold: #c5a059; --dark: #121212; --cream: #f9f7f2; --white: #ffffff; }
+        body { background-color: var(--cream); font-family: 'Cairo', sans-serif; margin: 0; }
+        
+        /* الهيدر */
         header {
-            background: var(--white);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 5%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            background: var(--white); display: flex; justify-content: space-between;
+            align-items: center; padding: 15px 5%; position: sticky; top: 0; z-index: 1000;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-
-        .brand { text-align: center; }
+        .brand { text-align: center; cursor: pointer; }
         .logo-ar { font-family: 'Amiri', serif; font-size: 28px; color: var(--gold); margin: 0; }
-        .logo-en { font-size: 10px; letter-spacing: 3px; color: #888; display: block; }
-
-        .nav-actions { display: flex; gap: 20px; font-size: 14px; font-weight: 600; cursor: pointer; }
-
-        /* البانر الرئيسي */
-        .hero {
-            background: #222; /* يمكنك إضافة صورة خلفية هنا */
-            height: 450px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-align: center;
-            padding: 0 20px;
-        }
-
-        .hero h2 { font-size: 2.5rem; margin-bottom: 20px; }
-        .shop-btn {
-            background: var(--gold);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .shop-btn:hover { opacity: 0.9; }
-
-        /* التصنيفات الدائرية */
-        .categories {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            padding: 40px 20px;
-            flex-wrap: wrap; /* لتنزيل العناصر في الجوال */
-        }
-
-        .cat-item { text-align: center; width: 80px; }
-        .circle {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            border: 1px solid #ddd;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 10px;
-            font-weight: bold;
-            color: var(--gold);
-        }
-
-        /* شبكة المنتجات (السر هنا في التجاوب) */
-        .products-grid {
-            display: grid;
-            padding: 20px 5%;
-            gap: 20px;
-            /* للكمبيوتر: 4 منتجات في الصف */
-            grid-template-columns: repeat(4, 1fr);
-        }
-
-        .product-card {
-            background: var(--white);
-            padding: 15px;
-            text-align: center;
-            position: relative;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
-        .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-
-        .product-card img {
-            width: 100%;
-            height: auto;
-            background: #f4f4f4;
-            margin-bottom: 15px;
-        }
-
-        .product-card h3 { font-size: 14px; font-weight: 400; height: 40px; }
-        .price { color: var(--gold); font-weight: bold; display: block; margin: 10px 0; }
+        .logo-en { font-size: 10px; letter-spacing: 3px; color: #888; }
         
-        .add-cart {
-            width: 100%;
-            border: 1px solid var(--gold);
-            background: transparent;
-            color: var(--gold);
-            padding: 8px;
-            cursor: pointer;
+        .cart-trigger { cursor: pointer; font-weight: bold; position: relative; }
+        .cart-badge {
+            background: var(--gold); color: white; border-radius: 50%;
+            padding: 2px 7px; font-size: 12px; position: absolute; top: -10px; left: -15px;
         }
 
-        /* استعلامات الوسائط (Media Queries) للهواتف */
+        /* البانر */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=1470&auto=format&fit=crop'); 
+            height: 350px; background-size: cover; background-position: center;
+            display: flex; align-items: center; justify-content: center; color: white; text-align: center;
+        }
+
+        /* المنتجات */
+        .products-grid {
+            display: grid; padding: 20px 5%; gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        }
+        .product-card {
+            background: var(--white); padding: 15px; text-align: center; border-radius: 8px;
+        }
+        .product-card img { width: 100%; border-radius: 5px; margin-bottom: 10px; }
+        .add-btn {
+            width: 100%; border: 1px solid var(--gold); background: transparent;
+            color: var(--gold); padding: 8px; cursor: pointer; transition: 0.3s;
+        }
+        .add-btn:hover { background: var(--gold); color: white; }
+
+        /* نافذة السلة (Modal) */
+        #cart-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 2000;
+        }
+        .modal-content {
+            background: white; width: 90%; max-width: 400px; margin: 50px auto;
+            padding: 20px; border-radius: 10px; position: relative;
+        }
+        .close-modal { position: absolute; left: 20px; top: 15px; cursor: pointer; font-size: 20px; }
+        .cart-item {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #eee; padding: 10px 0;
+        }
+        .remove-btn { color: red; cursor: pointer; font-size: 12px; }
+
         @media (max-width: 768px) {
-            .hero { height: 300px; }
-            .hero h2 { font-size: 1.5rem; }
-            
-            /* للجوال: منتجين في الصف كما في الصورة */
-            .products-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-                padding: 10px;
-            }
-
-            .categories { gap: 15px; }
-            .circle { width: 60px; height: 60px; font-size: 12px; }
-        }
-
-        footer {
-            background: white;
-            padding: 40px;
-            text-align: center;
-            margin-top: 50px;
-            border-top: 1px solid #eee;
+            .products-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="nav-actions">
-            <span>بحث</span>
-            <span>السلة (0)</span>
+        <div class="cart-trigger" onclick="toggleCart()">
+            السلة <span class="cart-badge" id="cart-count">0</span>
         </div>
         <div class="brand">
             <h1 class="logo-ar">ضبي</h1>
             <span class="logo-en">DHABI</span>
         </div>
-        <div class="menu">القائمة</div>
+        <div>بحث</div>
     </header>
 
     <section class="hero">
-        <div>
-            <h2>أناقة الغترة الخليجية</h2>
-            <button class="shop-btn">اكتشف المجموعة</button>
-        </div>
-    </section>
-
-    <section class="categories">
-        <div class="cat-item"><div class="circle">جديد</div><span>جديدنا</span></div>
-        <div class="cat-item"><div class="circle">نخبة</div><span>الأكثر مبيعاً</span></div>
-        <div class="cat-item"><div class="circle">أبيض</div><span>غتر بيضاء</span></div>
-        <div class="cat-item"><div class="circle">شتاء</div><span>مجموعات شتوية</span></div>
+        <h2>أصالة الغترة من متجر ضبي</h2>
     </section>
 
     <section class="products-grid">
         <div class="product-card">
-            <img src="img1.jpg" alt="منتج 1"> <h3>غترة ضبي السويسرية</h3>
-            <span class="price">450 ر.س</span>
-            <button class="add-cart">أضف للسلة</button>
+            <img src="https://via.placeholder.com/150" alt="غترة">
+            <h3>غترة ضبي الملكية</h3>
+            <p class="price">450 ر.س</p>
+            <button class="add-btn" onclick="addToCart('غترة ضبي الملكية', 450)">إضافة للسلة</button>
         </div>
         <div class="product-card">
-            <img src="img2.jpg" alt="منتج 2">
+            <img src="https://via.placeholder.com/150" alt="شماغ">
             <h3>شماغ ضبي كلاسيك</h3>
-            <span class="price">380 ر.س</span>
-            <button class="add-cart">أضف للسلة</button>
+            <p class="price">380 ر.س</p>
+            <button class="add-btn" onclick="addToCart('شماغ ضبي كلاسيك', 380)">إضافة للسلة</button>
         </div>
-        <div class="product-card">
-            <img src="img3.jpg" alt="منتج 3">
-            <h3>غترة قطن رويال</h3>
-            <span class="price">520 ر.س</span>
-            <button class="add-cart">أضف للسلة</button>
-        </div>
-        <div class="product-card">
-            <img src="img4.jpg" alt="منتج 4">
-            <h3>شماغ أحمر ملكي</h3>
-            <span class="price">490 ر.س</span>
-            <button class="add-cart">أضف للسلة</button>
-        </div>
-    </section>
+        </section>
 
-    <footer>
-        <p>من نحن | الشحن | الخصوصية</p>
-        <p>© 2026 متجر ضبي. جميع الحقوق محفوظة.</p>
-    </footer>
+    <div id="cart-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="toggleCart()">إغلاق</span>
+            <h3>منتجاتك المختارة</h3>
+            <div id="cart-items-list">
+                </div>
+            <div style="margin-top:20px; font-weight:bold;">
+                المجموع: <span id="total-price">0</span> ر.س
+            </div>
+            <button class="add-btn" style="background:var(--gold); color:white; margin-top:20px;">إتمام الطلب</button>
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+        let total = 0;
+
+        function addToCart(name, price) {
+            cart.push({name, price});
+            total += price;
+            updateUI();
+            alert('تمت إضافة ' + name + ' للسلة');
+        }
+
+        function updateUI() {
+            document.getElementById('cart-count').innerText = cart.length;
+            const list = document.getElementById('cart-items-list');
+            list.innerHTML = "";
+            
+            cart.forEach((item, index) => {
+                list.innerHTML += `
+                    <div class="cart-item">
+                        <span>${item.name}</span>
+                        <span>${item.price} ر.س 
+                            <span class="remove-btn" onclick="removeItem(${index})">(حذف)</span>
+                        </span>
+                    </div>
+                `;
+            });
+            document.getElementById('total-price').innerText = total;
+        }
+
+        function removeItem(index) {
+            total -= cart[index].price;
+            cart.splice(index, 1);
+            updateUI();
+        }
+
+        function toggleCart() {
+            const modal = document.getElementById('cart-modal');
+            modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
+        }
+    </script>
 
 </body>
 </html>
+
