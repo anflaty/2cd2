@@ -9,50 +9,89 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        :root { --primary: #1a1a1a; --accent: #b58d3f; --bg: #fdfcf9; --white: #ffffff; --gold: #d4af37; --success: #27ae60; }
+        :root { 
+            --primary: #1a1a1a; 
+            --accent: #b58d3f; 
+            --bg: #fdfcf9; 
+            --white: #ffffff; 
+            --gold: #d4af37; 
+            --success: #27ae60; 
+        }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
         body { background-color: var(--bg); color: var(--primary); overflow-x: hidden; }
 
         /* شاشة التحميل */
         #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--white); display: flex; justify-content: center; align-items: center; z-index: 9999; }
-        .loader-img { width: 150px; animation: pulse 1.5s infinite; }
+        .loader-img { width: 120px; animation: pulse 1.5s infinite; border-radius: 50%; }
 
-        /* الهيدر */
-        header { background: var(--white); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 10px 5%; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .logo-center { height: 60px; cursor: pointer; grid-column: 2; }
-        .header-left { display: flex; justify-content: flex-end; gap: 20px; font-size: 20px; align-items: center; }
-        .icon-btn { cursor: pointer; position: relative; color: var(--primary); }
-        #cart-count { position: absolute; top: -8px; right: -10px; background: var(--accent); color: white; font-size: 10px; padding: 2px 6px; border-radius: 50%; }
+        /* إشعارات التوست (Toast) */
+        #toast { 
+            position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); 
+            background: var(--primary); color: white; padding: 12px 25px; 
+            border-radius: 50px; z-index: 3000; transition: 0.5s ease; 
+            border: 1px solid var(--accent); display: flex; align-items: center; gap: 10px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+        }
+        #toast.show { bottom: 30px; }
+
+        /* الهيدر المطور */
+        header { 
+            background: var(--white); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 10px 20px; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+        }
+        .header-right { flex: 1; display: flex; justify-content: flex-start; }
+        .header-center { flex: 1; display: flex; justify-content: center; }
+        .header-left { flex: 1; display: flex; justify-content: flex-end; gap: 18px; align-items: center; }
+        
+        .logo-center { height: 50px; cursor: pointer; border-radius: 50%; }
+        .icon-btn { cursor: pointer; position: relative; font-size: 20px; color: var(--primary); transition: 0.2s; }
+        .icon-btn:hover { color: var(--accent); }
+        
+        #cart-count { 
+            position: absolute; top: -5px; right: -10px; 
+            background: var(--accent); color: white; 
+            font-size: 10px; padding: 2px 5px; border-radius: 50%; 
+            font-weight: bold; border: 1.5px solid var(--white);
+        }
 
         /* القائمة الجانبية */
         .sidebar { position: fixed; top: 0; right: -100%; width: 280px; height: 100%; background: var(--white); z-index: 2000; transition: 0.4s ease; padding: 40px 20px; box-shadow: -5px 0 15px rgba(0,0,0,0.1); }
         .sidebar.active { right: 0; }
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 1500; }
         .sidebar-overlay.active { display: block; }
-        .sidebar-links { list-style: none; margin-top: 30px; }
-        .sidebar-links li { padding: 15px 0; border-bottom: 1px solid #f0f0f0; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .sidebar-links { list-style: none; margin-top: 20px; }
+        .sidebar-links li { padding: 15px 0; border-bottom: 1px solid #eee; cursor: pointer; display: flex; align-items: center; gap: 10px; }
 
         /* البانر المزخرف */
-        .hero-banner { height: 350px; background: #2c2516; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border-bottom: 4px solid var(--accent); }
-        .zakhrafa-logo { font-family: 'Aref Ruqaa', serif; font-size: 90px; color: var(--gold); line-height: 1; }
-        .hero-sub { letter-spacing: 5px; font-size: 13px; color: white; margin-top: 10px; opacity: 0.8; }
+        .hero-banner { height: 320px; background: #2c2516; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border-bottom: 4px solid var(--accent); }
+        .zakhrafa-logo { font-family: 'Aref Ruqaa', serif; font-size: 80px; color: var(--gold); line-height: 1; }
+        .hero-sub { letter-spacing: 5px; font-size: 12px; color: white; margin-top: 10px; opacity: 0.8; }
 
-        /* المنتجات */
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; padding: 25px 5%; }
-        .product-card { background: white; border-radius: 12px; overflow: hidden; border: 1px solid #eee; cursor: pointer; transition: 0.3s; text-align: center; }
+        /* شبكة المنتجات */
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; padding: 20px 5%; }
+        .product-card { background: white; border-radius: 12px; overflow: hidden; border: 1px solid #eee; cursor: pointer; text-align: center; transition: 0.3s; }
+        .product-card:hover { transform: translateY(-5px); }
         .product-card img { width: 100%; height: 180px; object-fit: cover; }
-        .price-tag { color: var(--accent); font-weight: 800; display: block; margin: 10px 0; }
+        .price-tag { color: var(--accent); font-weight: 800; display: block; margin: 8px 0; }
 
-        /* الصفحات */
+        /* الصفحات والنماذج */
         .page { display: none; min-height: 80vh; padding-bottom: 50px; animation: fadeIn 0.4s; }
         .active-page { display: block; }
+        .form-container { max-width: 450px; margin: 20px auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        input, textarea { width: 100%; padding: 12px; margin-top: 10px; border: 1px solid #ddd; border-radius: 8px; outline: none; text-align: right; }
+        
+        .payment-option { border: 1px solid #eee; padding: 15px; border-radius: 10px; margin-top: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .payment-option.selected { border-color: var(--accent); background: #fffcf5; font-weight: bold; }
 
-        /* النماذج */
-        .form-container { max-width: 450px; margin: 30px auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-        .form-label { display: block; margin-top: 15px; font-weight: bold; font-size: 14px; color: var(--accent); }
-        input, textarea, select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; outline: none; text-align: right; }
         .btn-main { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 800; margin-top: 20px; }
-        .toggle-link { text-align: center; margin-top: 15px; color: var(--accent); cursor: pointer; font-size: 14px; }
 
         @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -61,25 +100,28 @@
 <body onload="initApp()">
 
     <div id="loader"><img src="1773123978112.jpeg" class="loader-img"></div>
+    <div id="toast"><i class="fas fa-check-circle" style="color: var(--gold);"></i> <span id="toast-msg"></span></div>
 
     <div class="sidebar-overlay" id="overlay" onclick="closeMenu()"></div>
     <div class="sidebar" id="sidebar">
         <div style="text-align: left;"><i class="fas fa-times" onclick="closeMenu()" style="font-size: 24px; cursor: pointer;"></i></div>
-        <div id="user-info" style="text-align: center; margin-bottom: 20px;">
-            <img src="1773123978112.jpeg" style="width: 80px; border-radius: 50%;">
-            <p id="welcome-msg" style="font-weight: bold; margin-top: 10px;">مرحباً بك في ضبي</p>
-        </div>
+        <img src="1773123978112.jpeg" style="width: 100px; display: block; margin: 20px auto; border-radius: 50%;">
+        <p id="user-welcome" style="text-align: center; font-weight: bold; margin-bottom: 20px; color: var(--accent);">مرحباً بك في ضبي</p>
         <ul class="sidebar-links">
             <li onclick="showPage('home-page'); closeMenu()"><i class="fas fa-home"></i> الرئيسية</li>
-            <li id="menu-auth-link" onclick="showPage('auth-page'); closeMenu()"><i class="fas fa-user"></i> تسجيل الدخول</li>
+            <li id="side-login-btn" onclick="showPage('auth-page'); closeMenu()"><i class="fas fa-user-circle"></i> حسابي / دخول</li>
             <li onclick="showPage('cart-page'); closeMenu()"><i class="fas fa-shopping-cart"></i> السلة</li>
-            <li id="logout-btn" onclick="logout()" style="display:none; color: red;"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</li>
+            <li id="logout-btn" onclick="logout()" style="display:none; color: red;"><i class="fas fa-sign-out-alt"></i> خروج</li>
         </ul>
     </div>
 
     <header>
-        <div class="header-right"><i class="fas fa-ellipsis-v icon-btn" onclick="openMenu()"></i></div>
-        <img src="1773123978112.jpeg" class="logo-center" onclick="showPage('home-page')">
+        <div class="header-right">
+            <div class="icon-btn" onclick="openMenu()"><i class="fas fa-bars"></i></div>
+        </div>
+        <div class="header-center">
+            <img src="1773123978112.jpeg" class="logo-center" onclick="showPage('home-page')">
+        </div>
         <div class="header-left">
             <div class="icon-btn" onclick="showPage('auth-page')"><i class="far fa-user"></i></div>
             <div class="icon-btn" onclick="showPage('cart-page')">
@@ -99,145 +141,167 @@
 
     <main id="details-page" class="page">
         <div style="padding: 20px 5%; max-width: 600px; margin: auto;">
-            <button onclick="showPage('home-page')" style="background:none; border:none; color:gray; cursor:pointer;"><i class="fas fa-arrow-right"></i> عودة</button>
-            <img id="det-img" src="" style="width:100%; border-radius:15px; margin-top:15px;">
-            <h2 id="det-title" style="font-family:'Amiri'; font-size: 32px; margin-top:15px;"></h2>
+            <button onclick="showPage('home-page')" style="background:none; border:none; cursor:pointer; color:gray;"><i class="fas fa-arrow-right"></i> عودة</button>
+            <img id="det-img" src="" style="width:100%; border-radius:15px; margin-top:15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+            <h2 id="det-title" style="margin: 15px 0; font-family:'Amiri'; font-size: 32px;"></h2>
             <span id="det-price" class="price-tag" style="font-size: 24px;"></span>
-            <p id="det-desc" style="line-height: 1.8; color: #555; white-space: pre-line;"></p>
+            <p id="det-desc" style="white-space:pre-line; line-height:1.8; color:#555;"></p>
             <button class="btn-main" onclick="addToCart()">إضافة للسلة</button>
-        </div>
-    </main>
-
-    <main id="auth-page" class="page">
-        <div id="login-section" class="form-container">
-            <h2 style="text-align:center; font-family:'Amiri';">تسجيل الدخول</h2>
-            <input type="email" id="login-email" placeholder="البريد الإلكتروني">
-            <input type="password" id="login-pass" placeholder="كلمة المرور">
-            <button class="btn-main" onclick="handleLogin()">دخول</button>
-            <p class="toggle-link" onclick="toggleAuth('reg')">ليس لديك حساب؟ سجل الآن</p>
-        </div>
-        <div id="reg-section" class="form-container" style="display:none;">
-            <h2 style="text-align:center; font-family:'Amiri';">إنشاء حساب جديد</h2>
-            <input type="text" id="reg-name" placeholder="الاسم الكامل">
-            <input type="email" id="reg-email" placeholder="البريد الإلكتروني">
-            <input type="password" id="reg-pass" placeholder="كلمة المرور">
-            <button class="btn-main" onclick="handleRegister()">إنشاء الحساب</button>
-            <p class="toggle-link" onclick="toggleAuth('login')">لديك حساب؟ سجل دخول</p>
         </div>
     </main>
 
     <main id="cart-page" class="page">
         <div class="form-container">
-            <h2 style="font-family:'Amiri'; border-bottom: 2px solid var(--accent); padding-bottom: 10px;">إتمام الطلب</h2>
-            <div id="cart-list" style="margin: 20px 0;"></div>
-            <label class="form-label">الاسم الكامل:</label>
-            <input type="text" id="custName" placeholder="الاسم">
-            <label class="form-label">رقم الهاتف:</label>
+            <h2 style="font-family:'Amiri'; border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 15px;">إتمام الطلب</h2>
+            <div id="cart-list" style="margin-bottom: 20px;"></div>
+            
+            <input type="text" id="custName" placeholder="الاسم الكامل">
             <input type="tel" id="custPhone" placeholder="رقم الهاتف">
-            <label class="form-label">العنوان بالتفصيل:</label>
-            <textarea id="custLocation" placeholder="المحافظة - الولاية - الشارع"></textarea>
-            <button class="btn-main" style="background: var(--success);" onclick="processOrder()">تأكيد الطلب واتساب</button>
+            <textarea id="custLocation" placeholder="العنوان (المحافظة - الولاية - الشارع)"></textarea>
+
+            <p style="margin-top: 20px; font-weight: bold;">طريقة الدفع:</p>
+            <div class="payment-option" id="pay-bank" onclick="selectPay('التحويل البنكي')">
+                <i class="fas fa-university"></i> تحويل بنكي (إرسال الوصل واتساب)
+            </div>
+            <div class="payment-option" id="pay-cash" onclick="selectPay('الدفع عند الاستلام')">
+                <i class="fas fa-truck"></i> الدفع عند الاستلام
+            </div>
+
+            <button class="btn-main" style="background: var(--success);" onclick="processOrder()">إرسال الطلب عبر واتساب</button>
+        </div>
+    </main>
+
+    <main id="auth-page" class="page">
+        <div class="form-container">
+            <h2 id="auth-title" style="text-align:center; font-family:'Amiri'; margin-bottom: 15px;">تسجيل الدخول</h2>
+            <div id="reg-fields" style="display:none;">
+                <input type="text" id="user-name" placeholder="الاسم الكامل">
+            </div>
+            <input type="email" id="user-email" placeholder="البريد الإلكتروني">
+            <input type="password" id="user-pass" placeholder="كلمة المرور">
+            <button class="btn-main" id="auth-btn" onclick="handleAuth()">دخول</button>
+            <p id="auth-toggle" onclick="toggleAuthMode()" style="text-align:center; margin-top:15px; cursor:pointer; color:var(--accent); font-size: 14px;">ليس لديك حساب؟ سجل الآن</p>
         </div>
     </main>
 
     <script>
         let cart = [];
         let currentProduct = null;
+        let selectedPayment = "";
+        let isLoginMode = true;
         let currentUser = JSON.parse(localStorage.getItem('loggedUser')) || null;
 
         const products = [
-            { id: 1, name: "حافلات الضبي", price: "16 ر.ع", img: "1.jpg", desc: "٤ غتر مزهة حجم ٥٢\nجوده عاليه جداً وتصميم ملكي فريد." },
-            { id: 2, name: "بوكس السمو", price: "12 ر.ع", img: "2.jpg", desc: "غترتين مقاس 55\nجوده عاليه وتغليف فاخر." },
+            { id: 1, name: "حافلات الضبي", price: "16 ر.ع", img: "1.jpg", desc: "٤ غتر مزهة حجم ٥٢\nجودة عالية جداً وتصميم ملكي فريد." },
+            { id: 2, name: "بوكس السمو", price: "12 ر.ع", img: "2.jpg", desc: "غترتين مقاس 55\nجودة عالية وتغليف فاخر." },
             { id: 3, name: "شموخ", price: "12 ر.ع", img: "3.jpg", desc: "غترتين أبيض وأحمر حجم ٥٢." },
-            { id: 4, name: "بوكس الجوكر", price: "14 ر.ع", img: "4.jpg", desc: "قماش ميراس الاصلي بارد." },
-            { id: 5, name: "شالات ضبي", price: "14 ر.ع", img: "5.jpg", desc: "شالات جوده عاليه." }
+            { id: 4, name: "بوكس الجوكر", price: "14 ر.ع", img: "4.jpg", desc: "قماش ميراس الاصلي بارد ومريح." },
+            { id: 5, name: "شالات ضبي", price: "14 ر.ع", img: "5.jpg", desc: "شالات بجودة عالية وخامة شتوية فاخرة." }
         ];
 
         function initApp() {
-            renderProducts();
-            updateUI();
-            setTimeout(() => { document.getElementById('loader').style.display = 'none'; }, 1000);
-        }
-
-        function renderProducts() {
             let html = "";
             products.forEach(p => {
                 html += `<div class="product-card" onclick="openDetails(${p.id})">
                     <img src="${p.img}" onerror="this.src='1773123978112.jpeg'">
-                    <div style="padding:10px;"><h4>${p.name}</h4><span class="price-tag">${p.price}</span></div>
+                    <div style="padding:10px;">
+                        <h4 style="font-size:14px;">${p.name}</h4>
+                        <span class="price-tag">${p.price}</span>
+                    </div>
                 </div>`;
             });
             document.getElementById('main-grid').innerHTML = html;
-        }
-
-        // نظام تسجيل الحساب
-        function handleRegister() {
-            const name = document.getElementById('reg-name').value;
-            const email = document.getElementById('reg-email').value;
-            const pass = document.getElementById('reg-pass').value;
-
-            if(!name || !email || !pass) return alert("يرجى ملء كافة الحقول");
-
-            let users = JSON.parse(localStorage.getItem('users')) || [];
-            if(users.find(u => u.email === email)) return alert("البريد مسجل مسبقاً");
-
-            users.push({name, email, pass});
-            localStorage.setItem('users', JSON.stringify(users));
-            alert("تم التسجيل بنجاح! يمكنك الآن تسجيل الدخول.");
-            toggleAuth('login');
-        }
-
-        // نظام تسجيل الدخول
-        function handleLogin() {
-            const email = document.getElementById('login-email').value;
-            const pass = document.getElementById('login-pass').value;
-
-            let users = JSON.parse(localStorage.getItem('users')) || [];
-            const user = users.find(u => u.email === email && u.pass === pass);
-
-            if(user) {
-                localStorage.setItem('loggedUser', JSON.stringify(user));
-                currentUser = user;
-                updateUI();
-                alert("أهلاً بك " + user.name);
-                showPage('home-page');
-            } else {
-                alert("بيانات الدخول غير صحيحة");
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem('loggedUser');
-            currentUser = null;
             updateUI();
-            showPage('home-page');
+            setTimeout(() => { document.getElementById('loader').style.display = 'none'; }, 800);
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('auth-title').innerText = isLoginMode ? "تسجيل الدخول" : "إنشاء حساب";
+            document.getElementById('auth-btn').innerText = isLoginMode ? "دخول" : "تسجيل";
+            document.getElementById('reg-fields').style.display = isLoginMode ? "none" : "block";
+            document.getElementById('auth-toggle').innerText = isLoginMode ? "ليس لديك حساب؟ سجل الآن" : "لديك حساب؟ سجل دخول";
+        }
+
+        function handleAuth() {
+            const email = document.getElementById('user-email').value;
+            const pass = document.getElementById('user-pass').value;
+            let users = JSON.parse(localStorage.getItem('shop_users')) || [];
+
+            if (isLoginMode) {
+                const user = users.find(u => u.email === email && u.pass === pass);
+                if (user) {
+                    currentUser = user;
+                    localStorage.setItem('loggedUser', JSON.stringify(user));
+                    showToast("مرحباً بك " + user.name);
+                    updateUI();
+                    showPage('home-page');
+                } else { showToast("خطأ في البريد أو كلمة المرور"); }
+            } else {
+                const name = document.getElementById('user-name').value;
+                if (!name || !email || !pass) return showToast("أكمل جميع الحقول");
+                users.push({ name, email, pass });
+                localStorage.setItem('shop_users', JSON.stringify(users));
+                showToast("تم التسجيل! يمكنك الدخول الآن");
+                toggleAuthMode();
+            }
         }
 
         function updateUI() {
-            if(currentUser) {
-                document.getElementById('welcome-msg').innerText = "أهلاً، " + currentUser.name;
-                document.getElementById('menu-auth-link').style.display = "none";
-                document.getElementById('logout-btn').style.display = "block";
+            if (currentUser) {
+                document.getElementById('user-welcome').innerText = "مرحباً، " + currentUser.name;
+                document.getElementById('side-login-btn').style.display = "none";
+                document.getElementById('logout-btn').style.display = "flex";
                 document.getElementById('custName').value = currentUser.name;
-            } else {
-                document.getElementById('welcome-msg').innerText = "مرحباً بك في ضبي";
-                document.getElementById('menu-auth-link').style.display = "block";
-                document.getElementById('logout-btn').style.display = "none";
             }
         }
 
-        function toggleAuth(type) {
-            document.getElementById('login-section').style.display = type === 'login' ? 'block' : 'none';
-            document.getElementById('reg-section').style.display = type === 'reg' ? 'block' : 'none';
+        function logout() { localStorage.removeItem('loggedUser'); location.reload(); }
+
+        function selectPay(method) {
+            selectedPayment = method;
+            document.getElementById('pay-bank').classList.toggle('selected', method === 'التحويل البنكي');
+            document.getElementById('pay-cash').classList.toggle('selected', method === 'الدفع عند الاستلام');
         }
 
-        function openMenu() { document.getElementById('sidebar').classList.add('active'); document.getElementById('overlay').classList.add('active'); }
-        function closeMenu() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
+        function addToCart() {
+            cart.push(currentProduct);
+            document.getElementById('cart-count').innerText = cart.length;
+            showToast("تمت إضافة المنتج إلى السلة");
+            showPage('home-page');
+        }
+
+        function processOrder() {
+            const name = document.getElementById('custName').value;
+            const phone = document.getElementById('custPhone').value;
+            const loc = document.getElementById('custLocation').value;
+            if (!name || !phone || !loc || !selectedPayment || cart.length === 0) return showToast("أكمل البيانات واختر طريقة الدفع");
+            
+            let msg = `*طلب جديد من متجر ضبي*\n`;
+            msg += `👤 الاسم: ${name}\n`;
+            msg += `📞 الهاتف: ${phone}\n`;
+            msg += `📍 الموقع: ${loc}\n`;
+            msg += `💰 الدفع: ${selectedPayment}\n`;
+            msg += `------------------\n`;
+            msg += `📦 المنتجات:\n`;
+            cart.forEach((i, n) => msg += `${n+1}. ${i.name} (${i.price})\n`);
+            if (selectedPayment === 'التحويل البنكي') msg += `\n*يرجى إرسال صورة إيصال التحويل الآن*`;
+            
+            window.open(`https://wa.me/96877031530?text=${encodeURIComponent(msg)}`);
+        }
+
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
             document.getElementById(id).classList.add('active-page');
-            if(id === 'cart-page') renderCart();
-            window.scrollTo(0,0);
+            if (id === 'cart-page') renderCart();
+            window.scrollTo(0, 0);
         }
 
         function openDetails(id) {
@@ -249,27 +313,13 @@
             showPage('details-page');
         }
 
-        function addToCart() {
-            cart.push(currentProduct);
-            document.getElementById('cart-count').innerText = cart.length;
-            alert("تمت الإضافة");
-            showPage('home-page');
-        }
-
         function renderCart() {
             const list = document.getElementById('cart-list');
             list.innerHTML = cart.length === 0 ? "السلة فارغة" : cart.map(i => `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed #ddd;"><span>${i.name}</span><b>${i.price}</b></div>`).join('');
         }
 
-        function processOrder() {
-            const name = document.getElementById('custName').value;
-            const phone = document.getElementById('custPhone').value;
-            const loc = document.getElementById('custLocation').value;
-            if(!name || !phone || !loc || cart.length === 0) return alert("أكمل البيانات");
-            let msg = `*طلب جديد من متجر ضبي*\nالاسم: ${name}\nالهاتف: ${phone}\nالموقع: ${loc}\nالطلبات:\n`;
-            cart.forEach(i => msg += `- ${i.name} (${i.price})\n`);
-            window.open(`https://wa.me/96877031530?text=${encodeURIComponent(msg)}`);
-        }
+        function openMenu() { document.getElementById('sidebar').classList.add('active'); document.getElementById('overlay').classList.add('active'); }
+        function closeMenu() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
     </script>
 </body>
 </html>
